@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <antlib xmlns:current="ant:current">
     <taskdef name="addusedpermission" classname="com.zutubi.android.ant.AddUsedPermissionTask"/>
+    <taskdef name="addusedfeature" classname="com.zutubi.android.ant.AddUsedFeatureTask"/>
     <taskdef name="jsonversion" classname="com.zutubi.android.ant.JsonVersionTask"/>
     <taskdef name="bumpversion" classname="com.zutubi.android.ant.BumpVersionTask"/>
     <taskdef name="getversion" classname="com.zutubi.android.ant.GetVersionTask"/>
@@ -8,6 +9,7 @@
     <taskdef name="lint" classname="com.zutubi.android.ant.LintTask"/>
     <taskdef name="ndkbuild" classname="com.zutubi.android.ant.NdkBuildTask"/>
     <taskdef name="removeusedpermission" classname="com.zutubi.android.ant.RemoveUsedPermissionTask"/>
+    <taskdef name="removeusedfeature" classname="com.zutubi.android.ant.RemoveUsedFeatureTask"/>
     <taskdef name="setmanifestattributes" classname="com.zutubi.android.ant.SetManifestAttributesTask"/>
     <taskdef name="setversion" classname="com.zutubi.android.ant.SetVersionTask"/>
 </antlib>

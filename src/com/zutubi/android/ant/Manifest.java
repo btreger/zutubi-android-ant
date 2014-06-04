@@ -25,8 +25,10 @@ import java.util.Map;
 public class Manifest {
     private static final String ELEMENT_MANIFEST = "manifest";
     private static final String ELEMENT_USES_PERMISSION = "uses-permission";
+    private static final String ELEMENT_USES_FEATURE = "uses-feature";
 
     private static final String ATTRIBUTE_NAME = "android:name";
+    private static final String ATTRIBUTE_REQUIRED =  "android:required";
     private static final String ATTRIBUTE_VERSION_CODE = "android:versionCode";
     private static final String ATTRIBUTE_VERSION_NAME = "android:versionName";
 
@@ -165,6 +167,60 @@ public class Manifest {
         for (final Element element : elementsToRemove) {
             removeElementAndPrefix(element);
         }
+    }
+
+    /**
+     * Adds a uses-feature element with the given name to the
+     * manifest.  If the manifest already contains some uses-permission
+     * elements, an attempt is made to add the new element just after those
+     * elements with the same indent.
+     *
+     * @param name name of the permission to add, e.g.
+     *             android.permission.WRITE_EXTERNAL_STORAGE
+     * @param required Is the feature required
+     */
+    public void addUsedFeature(final String name, final boolean required) {
+        // If we don't find existing elements, just add at the start (Android
+        // docs list uses-permission first).  Also use a 4-space indent as a
+        // default when we can't do better.
+        int insertIndex = 0;
+        String indentString = "\n    ";
+
+        final List<Element> existingElements = manifestElement.getChildren(ELEMENT_USES_FEATURE);
+        if (!existingElements.isEmpty()) {
+            final Element lastExistingElement = existingElements.get(existingElements.size() - 1);
+            insertIndex = manifestElement.nodeIndexOf(lastExistingElement) + 1;
+
+            final Text prefix = findPrefix(lastExistingElement);
+            if (prefix != null) {
+                indentString = prefix.getText();
+                // Note a newline must exist for us to have a prefix.
+                final int lastNewlineIndex = indentString.lastIndexOf('\n');
+                indentString = indentString.substring(lastNewlineIndex);
+            }
+        }
+
+        final Element elementToAdd = new Element(ELEMENT_USES_FEATURE);
+        elementToAdd.addAttribute(new Attribute(ATTRIBUTE_NAME, name));
+        elementToAdd.addAttribute(new Attribute(ATTRIBUTE_REQUIRED, String.valueOf(required)));
+        manifestElement.addNodes(insertIndex, new Text(indentString), elementToAdd);
+    }
+
+    /**
+     * Removed uses-feature element by the given name.
+     * @param name name of the feature to remove
+     */
+    public void removeUsedFeature(final String name) {
+    	 final List<Element> elementsToRemove = new LinkedList<Element>();
+         for (final Element child : manifestElement.getChildren(ELEMENT_USES_FEATURE)) {
+             if (name.equals(child.getAttributeValue(ATTRIBUTE_NAME))) {
+                 elementsToRemove.add(child);
+             }
+         }
+
+         for (final Element element : elementsToRemove) {
+             removeElementAndPrefix(element);
+         }
     }
 
     /**
